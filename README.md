@@ -5,20 +5,10 @@ This is the final project for Udacity's [Full Stack Web Developer Nanodegree](ht
 This page explains how to secure and set up a Linux distribution on a virtual machine, install and configure a web and database server to host a web application. 
 - The Linux distribution is [Ubuntu](https://www.ubuntu.com/download/server) 16.04 LTS.
 - The virtual private server is [Amazon Lighsail](https://lightsail.aws.amazon.com/).
-- The web application is my [Item Catalog project](https://github.com/boisalai/udacity-catalog-app) created earlier in this Nanodegree program.
-- The database server is [PostgreSQL](https://www.postgresql.org/).
-- My local machine is a MacBook Pro (Mac OS X 10_12_6).
+- The web application is my Item Catalog project created earlier in this Nanodegree program.
 
-You can visit http://13.59.39.163/ or http://ec2-13-59-39-163.us-east-2.compute.amazonaws.com for the website deployed.
 
-## Updates
-
-:white_check_mark: This steps was added after second review to meet the specifications.
-- [Step 5.3: Updated packages to most recent versions](#step_5_3)
-
-:white_check_mark: These two steps was added after first review to meet the specifications.
-- [Step 5.1: Use `Fail2Ban` to ban attackers](#step_5_1)
-- [Step 5.2: Automatically install updates](#step_5_2)
+You can visit http://35.178.109.13/ for the website deployed.
 
 ## Get a server
 
@@ -41,12 +31,12 @@ You can visit http://13.59.39.163/ or http://ec2-13-59-39-163.us-east-2.compute.
 - From the `Account` menu on Amazon Lightsail, click on `SSH keys` tab and download the Default Private Key.
 - Move this private key file named `LightsailDefaultPrivateKey-*.pem` into the local folder `~/.ssh` and rename it `lightsail_key.rsa`.
 - In your terminal, type: `chmod 600 ~/.ssh/lightsail_key.rsa`.
-- To connect to the instance via the terminal: `ssh -i ~/.ssh/lightsail_key.rsa ubuntu@13.59.39.163`, 
-  where `13.59.39.163` is the public IP address of the instance.
+- To connect to the instance via the terminal: `ssh -i ~/.ssh/lightsail_key.rsa ubuntu@35.178.109.13`, 
+  where `35.178.109.13` is the public IP address of the instance.
 
 <!--
-Public IP address is 13.59.39.163.
-ssh -i ~/.ssh/lightsail_key.rsa ubuntu@13.59.39.163
+Public IP address is 35.178.109.13.
+ssh -i ~/.ssh/lightsail_key.rsa ubuntu@35.178.109.13
 -->
 
 ## Secure the server
@@ -111,11 +101,11 @@ then the `Networking` tab, and then change the firewall configuration to match t
 - Allow ports 80(TCP), 123(UDP), and 2200(TCP), and deny the default port 22.
   <img src="images/screen5.png" width="600px">
 
-- From your local terminal, run: `ssh -i ~/.ssh/lightsail_key.rsa -p 2200 ubuntu@13.59.39.163`, where `13.59.39.163` is the public IP address of the instance.
+- From your local terminal, run: `ssh -i ~/.ssh/lightsail_key.rsa -p 2200 ubuntu@35.178.109.13`, where `35.178.109.13` is the public IP address of the instance.
 
 <!--
-Public IP address is 13.59.39.163.
-ssh -i ~/.ssh/lightsail_key.rsa -p 2200 ubuntu@13.59.39.163
+Public IP address is 35.178.109.13.
+ssh -i ~/.ssh/lightsail_key.rsa -p 2200 ubuntu@35.178.109.13
 -->
 
 **References**
@@ -125,28 +115,6 @@ ssh -i ~/.ssh/lightsail_key.rsa -p 2200 ubuntu@13.59.39.163
 
 
 <a name="step_5_1"></a>
-### Step 5.1: Use `Fail2Ban` to ban attackers 
-
-:white_check_mark: This step was added after first review to meet the specifications.
-
-`Fail2Ban` is an intrusion prevention software framework that protects computer servers from brute-force attacks.
-- Install Fail2Ban: `sudo apt-get install fail2ban`.
-- Install sendmail for email notice: `sudo apt-get install sendmail iptables-persistent`.
-- Create a copy of a file: `sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local`.
-- Change the settings in `/etc/fail2ban/jail.local` file:
-  ```
-  set bantime = 600
-  destemail = useremail@domain
-  action = %(action_mwl)s 
-  ```
-- Under `[sshd]` change `port = ssh` by `port = 2200`.
-- Restart the service: `sudo service fail2ban restart`.
-- You should receive an email like this:
-  <img src="images/screen7.png" width="600px">
-
-**References**
-- DigitalOcean, [How To Protect SSH with Fail2Ban on Ubuntu 14.04](https://www.digitalocean.com/community/tutorials/how-to-protect-ssh-with-fail2ban-on-ubuntu-14-04).
-- [Fail2Ban Official website](http://www.fail2ban.org/wiki/index.php/Main_Page).
 
 <a name="step_5_2"></a>
 ### Step 5.2: Automatically install updates
@@ -169,41 +137,6 @@ The `unattended-upgrades` package can be used to automatically install important
 - Official Ubuntu Documentation, [Automatic Updates](https://help.ubuntu.com/lts/serverguide/automatic-updates.html).
 - Ubuntu Wiki, [AutomaticSecurityUpdates](https://help.ubuntu.com/community/AutomaticSecurityUpdates).
 
-
-<a name="step_5_3"></a>
-### Step 5.3: Updated packages to most recent versions
-:white_check_mark: This step was added after second review to meet the specifications.
-
-Some packages have not been updated because the server need to be rebooted. I found the solution [here](https://www.digitalocean.com/community/questions/updating-ubuntu-14-04-security-updates).
-
-- I did these commands:
-  ```
-  sudo apt-get update
-  sudo apt-get dist-upgrade
-  sudo shutdown -r now
-  ```
-
-- Logged back in, and I now see this message:
-  ```
-  Alains-MBP:udacity-linux-server-configuration boisalai$ ssh -i ~/.ssh/lightsail_key.rsa -p 2200 ubuntu@13.59.39.163
-  Welcome to Ubuntu 16.04.3 LTS (GNU/Linux 4.4.0-1039-aws x86_64)
-
-   * Documentation:  https://help.ubuntu.com
-   * Management:     https://landscape.canonical.com
-   * Support:        https://ubuntu.com/advantage
-
-    Get cloud support with Ubuntu Advantage Cloud Guest:
-      http://www.ubuntu.com/business/services/cloud
-
-  0 packages can be updated.
-  0 updates are security updates.
-
-  Last login: Tue Oct 31 06:35:28 2017 from 24.201.154.77
-  ubuntu@ip-172-26-0-7:~$ 
-  ```
-
-**Reference**
-- DigitalOcean, [Updating Ubuntu 14.04 -- Security Updates](https://www.digitalocean.com/community/questions/updating-ubuntu-14-04-security-updates).
 
 
 
@@ -260,11 +193,11 @@ run `sudo -l` and enter the password again. The output should be like this:
   - Give the permissions: `chmod 700 .ssh` and `chmod 644 .ssh/authorized_keys`
   - Check in `/etc/ssh/sshd_config` file if `PasswordAuthentication` is set to `no`
   - Restart SSH: `sudo service ssh restart`
-- On the local machine, run: `ssh -i ~/.ssh/grader_key -p 2200 grader@13.59.39.163`.
+- On the local machine, run: `ssh -i ~/.ssh/udacitykey -p 2200 grader@35.178.109.13`.
 
 <!--
-Public IP address is 13.59.39.163.
-ssh -i ~/.ssh/grader_key -p 2200 grader@13.59.39.163
+Public IP address is 35.178.109.13
+ssh -i ~/.ssh/udacitykey -p 2200 grader@35.178.109.13
 le paraphrase est grader
 -->
 
@@ -283,8 +216,8 @@ le paraphrase est grader
 
   ```
   Current default time zone: 'America/Montreal'
-  Local time is now:      Thu Oct 19 21:55:16 EDT 2017.
-  Universal Time is now:  Fri Oct 20 01:55:16 UTC 2017.
+  Local time is now:      Thu Oct 19 21:55:16 EDT 2019.
+  Universal Time is now:  Fri Oct 20 01:55:16 UTC 2019.
   ```
 
 **References**
@@ -394,18 +327,18 @@ le paraphrase est grader
 
 - While logged in as `grader`, create `/var/www/catalog/` directory.
 - Change to that directory and clone the catalog project:<br>
-`sudo git clone https://github.com/boisalai/udacity-catalog-app.git catalog`.
+`sudo git clone https://github.com/pavan4202/item-catalog.git catalog`.
 - From the `/var/www` directory, change the ownership of the `catalog` directory to `grader` using: `sudo chown -R grader:grader catalog/`.
 - Change to the `/var/www/catalog/catalog` directory.
-- Rename the `application.py` file to `__init__.py` using: `mv application.py __init__.py`.
+- Rename the `project.py` file to `__init__.py` using: `mv project.py __init__.py`.
 
-- In `__init__.py`, replace line 27:
+- In `__init__.py`:
   ```
   # app.run(host="0.0.0.0", port=8000, debug=True)
   app.run()
   ```
 
-- In `database.py`, replace line 9:
+- In `database_setup.py`, replace :
    ```
    # engine = create_engine("sqlite:///catalog.db")
    engine = create_engine('postgresql://catalog:PASSWORD@localhost/catalog')
@@ -416,31 +349,14 @@ le paraphrase est grader
 - Go to [Google Cloud Plateform](https://console.cloud.google.com/).
 - Click `APIs & services` on left menu.
 - Click `Credentials`.
-- Create an OAuth Client ID (under the Credentials tab), and add http://13.59.39.163 and 
-http://ec2-13-59-39-163.us-east-2.compute.amazonaws.com as authorized JavaScript 
+- Create an OAuth Client ID (under the Credentials tab), and add http://35.178.109.13 as authorized JavaScript 
 origins.
-- Add http://ec2-13-59-39-163.us-east-2.compute.amazonaws.com/oauth2callback 
+-  
 as authorized redirect URI.
 - Download the corresponding JSON file, open it et copy the contents.
 - Open `/var/www/catalog/catalog/client_secret.json` and paste the previous contents into the this file.
 - Replace the client ID to line 25 of the `templates/login.html` file in the project directory.
 
-<!--
-### Step 13.3: Authenticate login through Facebook
-
-- Go to [Facebook for Developers](https://developers.facebook.com/).
-- Click `My Apps` and click `Add a New App`. 
-- Enter as `Display Name` then name `catalog`, enter your email and click 
-`Create App ID`.
-- Click `Set Up` button of the `Facebook Login` card.
-- Choose Web Plateform.
-- Enter `http://13.59.39.163/` as site URL and ckick `Save` button.
-- Click `Settings` under `Facebook Login`, and put `http://13.59.39.163/` and 
-`http://ec2-13-59-39-163.us-east-2.compute.amazonaws.com/` as the Valid OAuth redirect URIs, and click `Save Changes` button.
-- Click `Dashboard` on left menu. You should see `API Version` and `App ID` for the `catalog` application.
-- Replace the `appId` and `version`, respectively on lines 74 and 78 of the `templates/login.html`, with the correspoding `App ID` and `API Version`.
-- Open `/var/www/catalog/catalog/fb_client_secrets.json` file and replace `app_id` and `app_secret`.
--->
 
 ### Step 14.1: Install the virtual environment and dependencies
 
@@ -492,8 +408,7 @@ following lines to configure the virtual host:
 
   ```
   <VirtualHost *:80>
-	  ServerName 13.59.39.163
-    ServerAlias ec2-13-59-39-163.us-west-2.compute.amazonaws.com
+	  ServerName 35.178.109.13
 	  WSGIScriptAlias / /var/www/catalog/catalog.wsgi
 	  <Directory /var/www/catalog/catalog/>
 	  	Order allow,deny
@@ -552,31 +467,17 @@ following lines to configure the virtual host:
 
 ### Step 14.4: Set up the database schema and populate the database
 
-- Edit `/var/www/catalog/catalog/data.py`.
-- Replace `lig.random_para(250)` by `lig.random_para(240)` on lines 86, 143, 191, 234 and 280.
-
+- Edit `/var/www/catalog/catalog/database_setup.py`.
 - Add the these two lines at the beginning of the file.
 
   ```
   import sys
   sys.path.insert(0, "/var/www/catalog/catalog/venv3/lib/python3.5/site-packages") 
   ```
-
-- Add the following lines under `create_db()`.
-
-  ```
-  # Create database.
-  create_db()
-
-  # Delete all rows.
-  session.query(Item).delete()
-  session.query(Category).delete()
-  session.query(User).delete()
-  ```
-
+  
 - From the `/var/www/catalog/catalog/` directory, 
 activate the virtual environment: `. venv3/bin/activate`.
-- Run: `python data.py`.
+- Run: `python lotsofmenus.py`.
 - Deactivate the virtual environment: `deactivate`.
 
 ### Step 14.5: Disable the default Apache site
@@ -596,12 +497,10 @@ The following prompt will be returned:
 
 - Change the ownership of the project directories: `sudo chown -R www-data:www-data catalog/`.
 - Restart Apache again: `sudo service apache2 restart`.
-- Open your browser to http://13.59.39.163 or http://ec2-13-59-39-163.us-east-2.compute.amazonaws.com.
+- Open your browser to http://35.178.109.13
 
 <!--
-http://13.59.39.163/
-http://ec2-13-59-39-163.us-east-2.compute.amazonaws.com
-ServerAlias ec2-13-59-39-163.us-east-2.compute.amazonaws.com
+http://35.178.109.13/
 -->
 
 
@@ -624,108 +523,13 @@ ServerAlias ec2-13-59-39-163.us-east-2.compute.amazonaws.com
 - Reload Apache: `sudo service apache2 reload`.
 
 <!--
-### Step 15.2: Log in with Facebook OAuth
 
-- When I try to log in with Facebook OAuth, I get the following error:
-  ```
-  FileNotFoundError: [Errno 2] No such file or directory: 'fb_client_secrets.json'
-  ```
-- To correct that problem, edit `views/auth.py` using: `sudo nano -c auth.py`.
-- Near line 171 of this file, indicate the full path of the `fb_client_secrets.json` file:
-  ```
-  app_id = json.loads(
-        open("/var/www/catalog/catalog/fb_client_secrets.json", "r")
-        .read())["web"]["app_id"]
-  app_secret = json.loads(
-        open("/var/www/catalog/catalog/fb_client_secrets.json", "r")
-        .read())["web"]["app_secret"]
-  ```
-- Save and exit using CTRL+X and confirm with Y.
-- Reload Apache: `sudo service apache2 reload`.
 
-### Step 15.3: 
-
-Try adding
- __table_args__ = {'extend_existing': True} 
-to your User class right under __tablename__=
-
-```
-class Category(Base):
-    __tablename__ = "category"
-    __table_args__ = {'extend_existing': True} 
-    [...]
-
-class Item(Base):
-    __tablename__ = "item"
-    __table_args__ = (
-        UniqueConstraint('category_id', 'title', name='key'), 
-        {'extend_existing': True} 
-        ) 
-    [...]
-
-class User(Base):
-    __tablename__ = 'user'
-    __table_args__ = {'extend_existing': True} 
-    [...]
-```
-
-Dans /models/catagory.py et item.py j'ai ajouté des double-guilemmet
-comme dans user = relationship("User")
-
-Dans le fichier "/var/www/catalog/catalog/models/category.py", à la ligne 8
-Je remplace "from user import User" par "from models.user import User"
-
-Dans le fichier "/var/www/catalog/catalog/models/item.py", à la ligne 9
-Je remplace "from category import Category" par "from models.category import Category"
-
-Dans le fichier "/var/www/catalog/catalog/models/item.py", à la ligne 10
-Je remplace "from user import User" par "from models.user import User"
--->
 
 ## Useful commands
 
  - To get log messages from Apache server: `sudo tail /var/log/apache2/error.log`.
  - To restart Apache: `sudo service apache2 restart`.
-
-## Folder structure
-
-After these operations, the folder structure should look like:
-
-``` 
-/var/www/catalog
-    |-- catalog.wsgi
-    |__ /catalog             # Our Application Module
-         |-- __init__.py
-         |-- data.py
-         |-- database.py
-         |-- /models
-              |-- __init__.py
-              |-- category.py
-              |-- item.py
-              |__ user.py   
-         |-- /static
-              |__ styles.css
-         |-- /templates
-              |-- about.html
-              |-- base.html
-              |-- categories.html
-              |-- delete_item.html 
-              |-- edit_item.html
-              |-- login.html
-              |-- new_item.html
-              |__ show_item.html
-         |-- /utils
-              |__ lorem_ipsum_generator.py
-         |-- /venv3          # Virtual Environment
-         |__ /views
-              |-- __init__.py
-              |-- about.py
-              |-- api.py
-              |-- auth.py
-              |-- category_view.py
-              |-- item_view.py
-              |__ user_view.py
-```
 
 ## Other Helpful Resources
 
