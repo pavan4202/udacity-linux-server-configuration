@@ -1,5 +1,8 @@
 # Linux Server Configuration
 
+# added a step to meet specifications
+`sudo nano /etc/ssh/sshd_config` and set permitrooltlogin to no
+
 This is the final project for Udacity's [Full Stack Web Developer Nanodegree](https://www.udacity.com/course/full-stack-web-developer-nanodegree--nd004). 
 
 This page explains how to secure and set up a Linux distribution on a virtual machine, install and configure a web and database server to host a web application. 
